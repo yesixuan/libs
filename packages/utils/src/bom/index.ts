@@ -16,8 +16,8 @@ export function getUrlParams(name: string): string {
 
 // 修改url中的参数的值
 export function replaceParamVal(paramName: string, replaceWith: string): string {
-  var oUrl = location.href.toString()
-  var re = eval('/(' + paramName + '=)([^&]*)/gi')
+  const oUrl = location.href.toString()
+  const re = eval('/(' + paramName + '=)([^&]*)/gi')
   location.href = oUrl.replace(re, paramName + '=' + replaceWith)
   return location.href
 }
@@ -36,14 +36,14 @@ export function getClientHeight() {
 
 // 获取窗口可视范围宽度
 export function getPageViewWidth() {
-  let d = document,
+  const d = document,
     a = d.compatMode == 'BackCompat' ? d.body : d.documentElement
   return a.clientWidth
 }
 
 // 获取窗口宽度
 export function getPageWidth() {
-  let g = document,
+  const g = document,
     a = g.body,
     f = g.documentElement,
     d = g.compatMode == "BackCompat" ? a : g.documentElement
@@ -83,7 +83,7 @@ export function getPageScrollTop() {
 
 // 获取滚动条距左边的高度
 export function getPageScrollLeft() {
-  let a = document
+  const a = document
   return a.documentElement.scrollLeft || a.body.scrollLeft
 }
 
@@ -157,12 +157,12 @@ export const bottomVisible = () => {
 // 打开一个窗口
 export function openWindow(url, windowName, width, height) {
   // @ts-ignore
-  var x = parseInt(screen.width / 2.0) - width / 2.0
+  const x = parseInt(screen.width / 2.0) - width / 2.0
   // @ts-ignore
-  var y = parseInt(screen.height / 2.0) - height / 2.0
-  var isMSIE = navigator.appName == "Microsoft Internet Explorer"
+  const y = parseInt(screen.height / 2.0) - height / 2.0
+  const isMSIE = navigator.appName == "Microsoft Internet Explorer"
   if (isMSIE) {
-    var p = "resizable=1,location=no,scrollbars=no,width="
+    let p = "resizable=1,location=no,scrollbars=no,width="
     p = p + width
     p = p + ",height="
     p = p + height
@@ -172,7 +172,7 @@ export function openWindow(url, windowName, width, height) {
     p = p + y
     window.open(url, windowName, p)
   } else {
-    var win = window.open(
+    const win = window.open(
       url,
       "ZyiisPopup",
       "top=" +
