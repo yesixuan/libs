@@ -31,7 +31,7 @@ describe('校验器测试', () => {
       }
     ]
   }
-  const { verifySingle,verify, verifyAll } = createValidator(ruleConfig)
+  const { verifySingle, verify, verifyAll } = createValidator(ruleConfig)
   it('verifySingle', () => {
     // 没有必填的情况下，如果值为 null undefined 空字符，则不用校验其他规则，直接开绿灯 
     expect(verifySingle('notRequired', '').valid).toEqual(true)
