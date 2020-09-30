@@ -13,6 +13,12 @@
 7. 支持扩展自定义校验方法
 8. 支持动态校验
 
+## 安装
+
+```bash
+npm i @ignorance/validator@1.0.0-beta
+```
+
 ## 基础用法
 
 ```js
