@@ -32,7 +32,7 @@ export function subText(str, length) {
 export function fileToBase64String(file, format = ['jpg', 'jpeg', 'png', 'gif'], size = 20 * 1024 * 1024, formatMsg = '文件格式不正确', sizeMsg = '文件大小超出限制') {
   return new Promise((resolve, reject) => {
     // 格式过滤
-    let suffix = file.type.split('/')[1].toLowerCase();
+    const suffix = file.type.split('/')[1].toLowerCase();
     let inFormat = false;
     for (let i = 0; i < format.length; i++) {
       if (suffix === format[i]) {
@@ -48,10 +48,10 @@ export function fileToBase64String(file, format = ['jpg', 'jpeg', 'png', 'gif'],
       reject(sizeMsg);
     }
     // 转base64字符串
-    let fileReader = new FileReader();
+    const fileReader = new FileReader();
     fileReader.readAsDataURL(file);
     fileReader.onload = () => {
-      let res = fileReader.result;
+      const res = fileReader.result;
       resolve({ base64String: res, suffix: suffix });
       reject('异常文件，请重新选择');
     }
@@ -87,12 +87,12 @@ export function formatFileSize(fileSize) {
  *  @param { string } filename 转换后的文件名
  */
 export const base64ToFile = (base64, filename) => {
-  let arr = base64.split(',');
-  let mime = arr[0].match(/:(.*?);/)[1];
-  let suffix = mime.split('/')[1];// 图片后缀
-  let bstr = atob(arr[1]);
+  const arr = base64.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const suffix = mime.split('/')[1];// 图片后缀
+  const bstr = atob(arr[1]);
   let n = bstr.length;
-  let u8arr = new Uint8Array(n);
+  const u8arr = new Uint8Array(n);
   while (n--) {
     u8arr[n] = bstr.charCodeAt(n)
   }
@@ -104,10 +104,14 @@ export const base64ToFile = (base64, filename) => {
  *  @param { base64 } base64
  */
 export const base64ToBlob = base64 => {
+  // eslint-disable-next-line prefer-const
   let arr = base64.split(','),
+    // eslint-disable-next-line prefer-const
     mime = arr[0].match(/:(.*?);/)[1],
+    // eslint-disable-next-line prefer-const
     bstr = atob(arr[1]),
     n = bstr.length,
+    // eslint-disable-next-line prefer-const
     u8arr = new Uint8Array(n);
   while (n--) {
     u8arr[n] = bstr.charCodeAt(n);
@@ -131,7 +135,7 @@ export const blobToFile = (blob, fileName) => {
  * @param { * } file 图片文件
  */
 export const fileToBase64 = file => {
-  let reader = new FileReader();
+  const reader = new FileReader();
   reader.readAsDataURL(file);
   reader.onload = function (e) {
     // @ts-ignore
@@ -143,7 +147,7 @@ export const fileToBase64 = file => {
  * 递归生成树形结构
  */
 export function getTreeData(data, pid, pidName = 'parentId', idName = 'id', childrenName = 'children') {
-  let arr = [];
+  const arr = [];
 
   for (let i = 0; i < data.length; i++) {
     if (data[i][pidName] == pid) {
@@ -239,7 +243,7 @@ export function OutOsName(osVersion) {
   if (!osVersion) {
     return
   }
-  let str = osVersion.substr(0, 3);
+  const str = osVersion.substr(0, 3);
   if (str === "5.0") {
     return "Win 2000"
   } else if (str === "5.1") {
@@ -269,9 +273,9 @@ export function OutOsName(osVersion) {
  *  2: 其它
  */
 export function getOSType() {
-  let u = navigator.userAgent
-  let isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1;
-  let isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+  const u = navigator.userAgent
+  const isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1;
+  const isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
   if (isIOS) {
     return 0;
   }
@@ -291,12 +295,14 @@ export function getOSType() {
 export function debounce(func, wait, immediate) {
   let timeout;
   return function () {
-    let context = this;
-    let args = arguments;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const context = this;
+    // eslint-disable-next-line prefer-rest-params
+    const args = arguments;
 
     if (timeout) clearTimeout(timeout);
     if (immediate) {
-      let callNow = !timeout;
+      const callNow = !timeout;
       timeout = setTimeout(() => {
         timeout = null;
       }, wait);
@@ -325,10 +331,12 @@ export function throttle(func, wait, type) {
     timeout = null;
   }
   return function () {
-    let context = this;
-    let args = arguments;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const context = this;
+    // eslint-disable-next-line prefer-rest-params
+    const args = arguments;
     if (type === 1) {
-      let now = Date.now();
+      const now = Date.now();
 
       if (now - previous > wait) {
         func.apply(context, args);
@@ -352,8 +360,8 @@ export function throttle(func, wait, type) {
  * @param {*} target 
  */
 export function type(target) {
-  let ret = typeof (target);
-  let template = {
+  const ret = typeof (target);
+  const template = {
     "[object Array]": "array",
     "[object Object]": "object",
     "[object Number]": "number - object",
@@ -364,7 +372,7 @@ export function type(target) {
   if (target === null) {
     return 'null';
   } else if (ret == "object") {
-    let str = Object.prototype.toString.call(target);
+    const str = Object.prototype.toString.call(target);
     return template[str];
   } else {
     return ret;
@@ -384,12 +392,12 @@ export const RandomNum = (min, max) => Math.floor(Math.random() * (max - min + 1
  * @param {array} arr
  */
 export function arrScrambling(arr) {
-  let array = arr;
+  const array = arr;
   let index = array.length;
   while (index) {
     index -= 1;
-    let randomIndex = Math.floor(Math.random() * index);
-    let middleware = array[index];
+    const randomIndex = Math.floor(Math.random() * index);
+    const middleware = array[index];
     array[index] = array[randomIndex];
     array[randomIndex] = middleware
   }
@@ -422,10 +430,11 @@ export function countOccurrences(arr, value) {
 export function tco(f) {
   let value;
   let active = false;
-  let accumulated = [];
+  const accumulated = [];
 
   return function accumulator() {
     // @ts-ignore
+    // eslint-disable-next-line prefer-rest-params
     accumulated.push(arguments);
     if (!active) {
       active = true;
@@ -504,9 +513,9 @@ export function turnCase(str, type) {
 export function hexColor() {
 
   let str = '#';
-  let arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'];
+  const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'];
   for (let i = 0; i < 6; i++) {
-    let index = Number.parseInt((Math.random() * 16).toString());
+    const index = Number.parseInt((Math.random() * 16).toString());
     str += arr[index]
   }
   return str;
@@ -516,7 +525,7 @@ export function hexColor() {
  * 方法二
  */
 export const randomHexColorCode = () => {
-  let n = (Math.random() * 0xfffff * 1000000).toString(16);
+  const n = (Math.random() * 0xfffff * 1000000).toString(16);
   return '#' + n.slice(0, 6);
 };
 
@@ -597,11 +606,13 @@ export const sumNum = (...arr) => [...arr].reduce((acc, val) => acc + val, 0);
  * @param { number } num 
  */
 export function numberToChinese(num) {
-  var AA = new Array("零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十");
-  var BB = new Array("", "十", "百", "仟", "萬", "億", "点", "");
-  var a = ("" + num).replace(/(^0*)/g, "").split("."),
+  const AA = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+  const BB = ["", "十", "百", "仟", "萬", "億", "点", ""];
+  // eslint-disable-next-line prefer-const
+  let a = ("" + num).replace(/(^0*)/g, "").split("."),
     k = 0,
     re = "";
+  // eslint-disable-next-line no-var
   for (var i = a[0].length - 1; i >= 0; i--) {
     switch (k) {
       case 0:
@@ -630,6 +641,7 @@ export function numberToChinese(num) {
   if (a.length > 1) // 加上小数部分(如果有小数部分)
   {
     re += BB[6];
+    // eslint-disable-next-line no-var
     for (var i = 0; i < a[1].length; i++)
       re += AA[a[1].charAt(i)];
   }
@@ -648,24 +660,28 @@ export function changeToChinese(Num) {
   //判断如果传递进来的不是字符的话转换为字符
   if (typeof Num == "number") {
     Num = new String(Num);
-  };
+  }
   Num = Num.replace(/,/g, "") //替换tomoney()中的“,”
   Num = Num.replace(/ /g, "") //替换tomoney()中的空格
   Num = Num.replace(/￥/g, "") //替换掉可能出现的￥字符
   if (isNaN(Num)) { //验证输入的字符是否为数字
     //alert("请检查小写金额是否正确");
     return "";
-  };
+  }
   //字符处理完毕后开始转换，采用前后两部分分别转换
-  var part = String(Num).split(".");
+  const part = String(Num).split(".");
+  // eslint-disable-next-line no-var
   var newchar = "";
   //小数点前进行转化
+  // eslint-disable-next-line no-var
   for (var i = part[0].length - 1; i >= 0; i--) {
     if (part[0].length > 10) {
       return "";
       //若数量超过拾亿单位，提示
     }
+    // eslint-disable-next-line no-var
     var tmpnewchar = ""
+    // eslint-disable-next-line no-var
     var perchar = part[0].charAt(i);
     switch (perchar) {
       case "0":
@@ -737,6 +753,7 @@ export function changeToChinese(Num) {
         tmpnewchar = tmpnewchar + "拾";
         break;
     }
+    // eslint-disable-next-line no-var
     var newchar = tmpnewchar + newchar;
   }
   //小数点之后进行转化
@@ -809,8 +826,8 @@ export function changeToChinese(Num) {
  */
 export function sortCompare(property, flag) {
   return function (a, b) {
-    var value1 = a[property];
-    var value2 = b[property];
+    const value1 = a[property];
+    const value2 = b[property];
     if (flag === "asc") {
       return value1 - value2;
     } else if (flag === "desc") {

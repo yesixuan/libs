@@ -66,7 +66,8 @@ async function build(target) {
         ],
       }),
       terser()
-    ]
+    ],
+    external: ['rxjs', 'vuex'],
   }
   const outputOptions = [
     {

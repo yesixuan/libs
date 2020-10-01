@@ -4,7 +4,7 @@
  * @returns {Number} 返回值为时间毫秒值
  */
 export function toNextTimes(n) {
-  let timestamp = +new Date() + n * 86400000;
+  const timestamp = +new Date() + n * 86400000;
   return timestamp;
 }
 
@@ -13,9 +13,9 @@ export function toNextTimes(n) {
 *  @return {*} WeekFirstDay 返回本周第一天的时间
 */
 export function showWeekFirstDay() {
-  let Nowdate = new Date();
+  const Nowdate = new Date();
   // @ts-ignore
-  let WeekFirstDay = new Date(Nowdate - (Nowdate.getDay() - 1) * 86400000);
+  const WeekFirstDay = new Date(Nowdate - (Nowdate.getDay() - 1) * 86400000);
   return WeekFirstDay;
 }
 
@@ -24,11 +24,11 @@ export function showWeekFirstDay() {
 *  @return {*} WeekLastDay 返回本周最后一天的时间
 */
 export function showWeekLastDay() {
-  let Nowdate = new Date();
+  const Nowdate = new Date();
   // @ts-ignore
-  let WeekFirstDay = new Date(Nowdate - (Nowdate.getDay() - 1) * 86400000);
+  const WeekFirstDay = new Date(Nowdate - (Nowdate.getDay() - 1) * 86400000);
   // @ts-ignore
-  let WeekLastDay = new Date((WeekFirstDay / 1000 + 6 * 86400) * 1000);
+  const WeekLastDay = new Date((WeekFirstDay / 1000 + 6 * 86400) * 1000);
   return WeekLastDay;
 }
 
@@ -38,8 +38,8 @@ export function showWeekLastDay() {
 *  @return {*} MonthFirstDay 返回本月第一天的时间
 */
 export function showMonthFirstDay() {
-  let Nowdate = new Date();
-  let MonthFirstDay = new Date(Nowdate.getFullYear(), Nowdate.getMonth());
+  const Nowdate = new Date();
+  const MonthFirstDay = new Date(Nowdate.getFullYear(), Nowdate.getMonth());
   return MonthFirstDay;
 }
 
@@ -50,10 +50,10 @@ export function showMonthFirstDay() {
 *  @return {*} MonthLastDay 返回本月最后一天的时间
 */
 export function showMonthLastDay() {
-  let Nowdate = new Date();
-  let MonthNextFirstDay = new Date(Nowdate.getFullYear(), Nowdate.getMonth() + 1);
+  const Nowdate = new Date();
+  const MonthNextFirstDay = new Date(Nowdate.getFullYear(), Nowdate.getMonth() + 1);
   // @ts-ignore
-  let MonthLastDay = new Date(MonthNextFirstDay - 86400000);
+  const MonthLastDay = new Date(MonthNextFirstDay - 86400000);
   return MonthLastDay;
 }
 
@@ -64,8 +64,8 @@ export function showMonthLastDay() {
 * @returns {Number} 返回值为时间毫秒值
 */
 export function timeToTimestamp(time) {
-  let date = new Date(time);
-  let timestamp = date.getTime();
+  const date = new Date(time);
+  const timestamp = date.getTime();
   return timestamp;
 }
 
@@ -76,11 +76,11 @@ export function timeToTimestamp(time) {
 *  @return {string} timeText 返回系统时间字符串
 */
 export function getdataTimeSec() {
-  let time = new Date();
+  const time = new Date();
   let weekDay;
-  let year = time.getFullYear();
-  let month = time.getMonth() + 1;
-  let day = time.getDate();
+  const year = time.getFullYear();
+  const month = time.getMonth() + 1;
+  const day = time.getDate();
   //获取时分秒
   let h = time.getHours();
   let m = time.getMinutes();
@@ -89,7 +89,7 @@ export function getdataTimeSec() {
   h = check(h);
   m = check(m);
   s = check(s);
-  let now_day = time.getDay();
+  const now_day = time.getDay();
   switch (now_day) {
     case 0: {
       weekDay = "星期日"
@@ -124,7 +124,7 @@ export function getdataTimeSec() {
     }
       break;
   }
-  let timeText = year + "年" + month + "月" + day + "日  " + " " + weekDay + " " + h + ":" + m + ":" + s;
+  const timeText = year + "年" + month + "月" + day + "日  " + " " + weekDay + " " + h + ":" + m + ":" + s;
 
   return timeText
 }
@@ -148,17 +148,17 @@ export function check(i) {
 export function getTimeInterval(startTime, endTime) {
   // @ts-ignore
   let runTime = parseInt((endTime - startTime) / 1000);
-  let year = Math.floor(runTime / 86400 / 365);
+  const year = Math.floor(runTime / 86400 / 365);
   runTime = runTime % (86400 * 365);
-  let month = Math.floor(runTime / 86400 / 30);
+  const month = Math.floor(runTime / 86400 / 30);
   runTime = runTime % (86400 * 30);
-  let day = Math.floor(runTime / 86400);
+  const day = Math.floor(runTime / 86400);
   runTime = runTime % 86400;
-  let hour = Math.floor(runTime / 3600);
+  const hour = Math.floor(runTime / 3600);
   runTime = runTime % 3600;
-  let minute = Math.floor(runTime / 60);
+  const minute = Math.floor(runTime / 60);
   runTime = runTime % 60;
-  let second = runTime;
+  const second = runTime;
   let str = '';
   if (year > 0) {
     str = year + '年';
@@ -193,7 +193,7 @@ export function getTimeInterval(startTime, endTime) {
 * @return {string} dateText 返回为指定格式的日期字符串
 */
 export function getFormatDate(date, dateType) {
-  let dateObj = new Date(date);
+  const dateObj = new Date(date);
   let month: string | number = dateObj.getMonth() + 1;
   let strDate: string | number = dateObj.getDate();
   let hours: string | number = dateObj.getHours();
@@ -255,8 +255,8 @@ export function leapYear(year) {
 * @return {array}  arr 返回符合闰年的数组
 */
 export function leapYears(start, end) {
-  let arr = [];
-  for (var i = start; i < end; i++) {
+  const arr = [];
+  for (let i = start; i < end; i++) {
     if (leapYear(i)) {
       // @ts-ignore
       arr.push(i)
@@ -274,7 +274,7 @@ export function leapYears(start, end) {
 * @return {boolean} 返回布尔值
 */
 export function isTime(str) {
-  var a = str.match(/^(\d{1,2})(:)?(\d{1,2})\2(\d{1,2})$/);
+  const a = str.match(/^(\d{1,2})(:)?(\d{1,2})\2(\d{1,2})$/);
   if (a == null) { return false; }
   if (a[1] >= 24 || a[3] >= 60 || a[4] >= 60) {
     return false
@@ -288,9 +288,9 @@ export function isTime(str) {
 * @return {boolean} 返回布尔值
 */
 export function strDateTime(str) {
-  var result = str.match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/);
+  const result = str.match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/);
   if (result == null) return false;
-  var d = new Date(result[1], result[3] - 1, result[4]);
+  const d = new Date(result[1], result[3] - 1, result[4]);
   return (d.getFullYear() == result[1] && d.getMonth() + 1 == result[3] && d.getDate() == result[4]);
 }
 
@@ -300,9 +300,9 @@ export function strDateTime(str) {
 * @return {boolean} 返回布尔值
 */
 export function fullStrDateTime(str) {
-  var result = str.match(/^(\d{4})(-|\/)(\d{1,2})\2(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$/);
+  const result = str.match(/^(\d{4})(-|\/)(\d{1,2})\2(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$/);
   if (result == null) return false;
-  var d = new Date(result[1], result[3] - 1, result[4], result[5], result[6], result[7]);
+  const d = new Date(result[1], result[3] - 1, result[4], result[5], result[6], result[7]);
   return (d.getFullYear() == result[1] && (d.getMonth() + 1) == result[3] && d.getDate() == result[4] && d.getHours() == result[5] && d.getMinutes() == result[6] && d.getSeconds() == result[7]);
 }
 
@@ -316,7 +316,7 @@ export function fullStrDateTime(str) {
 * @return {boolean} 返回布尔值
 */
 export function compareDate(d1, d2) {
-  return ((new Date(d1.replace(/-/g, "\/"))) < (new Date(d2.replace(/-/g, "\/"))));
+  return ((new Date(d1.replace(/-/g, "/"))) < (new Date(d2.replace(/-/g, "/"))));
 }
 
 
@@ -337,9 +337,9 @@ export function isToday(val) {
 * @return {boolean} 返回布尔值
 */
 export function isYesterday(val) {
-  var today = new Date();
-  var yesterday = new Date(+today - 1000 * 60 * 60 * 24);
-  var test = new Date(val);
+  const today = new Date();
+  const yesterday = new Date(+today - 1000 * 60 * 60 * 24);
+  const test = new Date(val);
   // @ts-ignore
   if (yesterday.getYear() === test.getYear() && yesterday.getMonth() === test.getMonth() && yesterday.getDate() === test.getDate()) {
     return true;
@@ -357,11 +357,11 @@ export function isYesterday(val) {
 * @return {string} 返回想要得到的日期
 */
 export function convertDate(date, day) {
-  let tempDate = new Date(date);
+  const tempDate = new Date(date);
   tempDate.setDate(tempDate.getDate() + day);
-  let Y = tempDate.getFullYear();
-  let M = tempDate.getMonth() + 1 < 10 ? '0' + (tempDate.getMonth() + 1) : tempDate.getMonth() + 1;
-  let D = tempDate.getDate() < 10 ? '0' + (tempDate.getDate()) : tempDate.getDate();
-  let result = Y + "-" + M + "-" + D
+  const Y = tempDate.getFullYear();
+  const M = tempDate.getMonth() + 1 < 10 ? '0' + (tempDate.getMonth() + 1) : tempDate.getMonth() + 1;
+  const D = tempDate.getDate() < 10 ? '0' + (tempDate.getDate()) : tempDate.getDate();
+  const result = Y + "-" + M + "-" + D
   return result;
 }
