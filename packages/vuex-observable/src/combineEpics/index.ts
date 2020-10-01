@@ -1,4 +1,4 @@
-import { Action } from '../createEpicMiddleware'
+import { Action } from '../createEpicPlugin'
 import { merge } from 'rxjs'
 import { Epic } from '../epic'
 
@@ -9,7 +9,7 @@ export function combineEpics<
   T extends Action, 
   O extends T = T, 
   S = void, 
-  D = any
+  D = unknown
 >(...epics: Epic<T, O, S, D>[]): Epic<T, O, S, D> {
   const merger = (...args: Parameters<Epic>) => merge(
     ...epics.map(epic => {

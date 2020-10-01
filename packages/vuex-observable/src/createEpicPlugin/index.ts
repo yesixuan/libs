@@ -18,6 +18,7 @@ export interface EpicMiddleware<
   S = void,
   D = any
 > {
+  <S>(store: Store<S>): void
   run(rootEpic: Epic<T, O, S, D>): void
 }
 
@@ -37,7 +38,7 @@ const getType = (target: string | Object): string => {
 /**
  * @public
  */
-export function createEpicMiddleware<
+export function createEpicPlugin<
   T extends Action,
   O extends T = T,
   S = void,
@@ -77,6 +78,7 @@ export function createEpicMiddleware<
               '<anonymous>'}" does not return a stream. Double check you're not missing a return statement!`
           );
         }
+        
         return output$;
       }),
       mergeMap(output$ => 
@@ -86,9 +88,10 @@ export function createEpicMiddleware<
         )
       )
     )
-    // 输出流之后出发 dispatch 方法
+    // 输出流之后触发 dispatch 方法
     // result$.subscribe(store.dispatch)
     result$.subscribe((action: OwnAction<any>) => {
+      
       if (typeof action === 'object' && action.isAction) {
         store.dispatch(action);
       } else {
@@ -97,8 +100,9 @@ export function createEpicMiddleware<
     })
 
     const { dispatch, commit } = store
-
+    
     store.dispatch = (...args: any[]) => {
+      
       typeof args[0] === 'object'
         ? actionSubject$.next(args[0])
         : actionSubject$.next({ type: args[0], payload: args[1] } as any)
@@ -107,12 +111,14 @@ export function createEpicMiddleware<
       // 如果定义了 action 就执行原来的 action， 没有就作罢
       if ((store as any)._actions[type]) {
         if (typeof args[0] === 'object') {
-          return dispatch.call(store, args[0].type, args[0].payload || null);
+          return Promise.resolve(dispatch.call(store, args[0].type, args[0].payload || null));
         }
-        return dispatch.call(store, ...args);
+        return Promise.resolve(dispatch.call(store, args[0], args[1]));
       }
+      return Promise.resolve('没有找到该类型的 action')
     }
     store.commit = (...args: any[]) => {
+      
       const type = getType(args[0])
 
       // 如果定义了 mutation 就执行原来的 mutation， 没有就作罢
@@ -120,7 +126,7 @@ export function createEpicMiddleware<
         if (typeof args[0] === 'object') {
           commit.call(store, args[0].type, args[0].payload || null);
         } else {
-          commit.call(store, ...args);
+          commit.call(store, args[0], args[1]);
         }
         stateSubject$.next(store.state);
       }
@@ -128,7 +134,7 @@ export function createEpicMiddleware<
   }
 
   // run 方法执行之后，所有监视器已经架设好
-  epicMiddleware.run = rootEpic => {
+  epicMiddleware.run = rootEpic => {    
     if (process.env.NODE_ENV !== 'production' && !store) {
       console.warn(
         'epicMiddleware.run(rootEpic) called before the middleware has been setup by redux. Provide the epicMiddleware instance to createStore() first.'
