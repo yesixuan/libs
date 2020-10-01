@@ -1,9 +1,9 @@
 {
-  "name": "@ignorance/vuex-observable",
-  "version": "2.0.02-beta",
-  "description": "vuex plugin connected rxjs",
+  "name": "@ignorance/rx-composition",
+  "version": "0.0.1",
+  "description": "rx composition API for vue3",
   "keywords": [
-    "vuex",
+    "vue3",
     "rxjs"
   ],
   "author": "yesixuan <18373209286@163.com>",

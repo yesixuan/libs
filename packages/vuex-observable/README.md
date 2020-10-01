@@ -33,7 +33,7 @@ export default new Vuex.Store({
     PING(state) {
       state.count++;
     },
-    PONG(state, { num }) {
+    PONG(state, num) {
       state.count = state.count + num;
     }
   },
