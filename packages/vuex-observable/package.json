@@ -1,6 +1,6 @@
 {
   "name": "@ignorance/vuex-observable",
-  "version": "2.0.02-beta",
+  "version": "2.0.02-beta-1",
   "description": "vuex plugin connected rxjs",
   "keywords": [
     "vuex",

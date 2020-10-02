@@ -22,7 +22,7 @@ export interface EpicMiddleware<
   run(rootEpic: Epic<T, O, S, D>): void
 }
 
-interface OwnAction<T> extends Action<T> {
+export interface OwnAction<T> extends Action<T> {
   payload?: any,
   isAction?: boolean
 }
@@ -71,7 +71,7 @@ export function createEpicPlugin<
       map(epic => {
         // 调用了所有 epic 函数（在 epic 函数内部对 action$ 进行了监听、转化）
         // 这里的 output$ 是所有对 action$ 转化之后的集合
-        const output$ = epic(action$, state$, options.dependencies!)
+        const output$ = epic(action$, state$, store, options.dependencies!)
         if (!output$) {
           throw new TypeError(
             `Your root Epic "${epic.name ||
@@ -115,7 +115,7 @@ export function createEpicPlugin<
         }
         return Promise.resolve(dispatch.call(store, args[0], args[1]));
       }
-      return Promise.resolve('没有找到该类型的 action')
+      return Promise.resolve('')
     }
     store.commit = (...args: any[]) => {
       

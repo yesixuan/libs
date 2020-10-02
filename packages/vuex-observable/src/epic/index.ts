@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs'
 import { StateObservable } from '../StateObservable'
+import { Store } from 'vuex'
 
 export interface Action<T = any> {
   type: T
@@ -14,6 +15,7 @@ export declare interface Epic<
   (
     action$: Observable<Input>,
     state$: StateObservable<State>,
+    store: Store<State>,
     dependencies: Dependencies
   ): Observable<Output>
 }

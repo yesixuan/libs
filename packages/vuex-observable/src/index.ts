@@ -1,3 +1,4 @@
 export { createEpicPlugin } from './createEpicPlugin'
-export { combineEpics } from './combineEpics'
+export * from './combineEpics'
 export * from './epic'
+export * from './operators'
