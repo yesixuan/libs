@@ -49,8 +49,6 @@ export function useEventCallback<EventValue, State = void, Inputs = void>(
   let subscription: Subscription
 
   function eventCallback(e: EventValue) {
-    console.log(33333);
-    
     return event$.next(e)
   }
 
