@@ -81,6 +81,12 @@ async function build(target) {
       format: 'esm',
       name: target,
       sourcemap: true
+    },
+    {
+      file: `${getPkgPath(target)}/lib/index.iife.js`,
+      format: 'iife',
+      name: target,
+      sourcemap: true
     }
   ]
   const bundle = await rollup.rollup(inputOptions)
