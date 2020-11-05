@@ -1,8 +1,17 @@
 import { Left, Right } from ".."
 
-export const partial = (fn, ...presetArgs) =>
-  (...laterArgs) => 
+interface anyFn {
+  (...args: any): any
+}
+
+interface partialType<RType> {
+  (...args: any): RType
+}
+
+export function partial<T extends anyFn> (fn: T, ...presetArgs): partialType<ReturnType<T>> {
+  return (...laterArgs) => 
     fn(...presetArgs, ...laterArgs)
+}
 
 export const curry = (fn, arity: number = fn.length, nextCurried?: any) => 
   (nextCurried = prevArgs => 
@@ -27,4 +36,10 @@ export const either = curry((leftFn, rightFn, functor) => {
 })
 
 
-  
+var haha = curry(
+  (a, b): number => a + b
+)
+var hehe = haha(3)
+
+console.log(hehe);
+
