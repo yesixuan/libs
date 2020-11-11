@@ -14,6 +14,9 @@
     "lib": "lib",
     "test": "__tests__"
   },
+  "dependencies": {
+    "ts-toolbelt": "^8.0.7"
+  },
   "files": [
     "lib"
   ],
