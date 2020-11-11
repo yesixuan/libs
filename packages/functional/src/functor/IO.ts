@@ -17,4 +17,10 @@ export class IO<Fn extends Fun> {
   get effect(): Fun {
     return this.unsafePerformIO
   }
+  join(): ReturnType<Fn> {
+    return this.unsafePerformIO()
+  }
+  chain(fn: Fn): ThisType<Fn> {
+    return this.map(fn).join()
+  }
 }

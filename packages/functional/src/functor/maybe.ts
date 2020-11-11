@@ -23,7 +23,14 @@ export class Maybe<Value = any> extends Container<Value> {
   }
   // Maybe 的 map 会检测内部的值是否有效
   public map<Fn extends (...args: any) => any>(fn: Fn): Maybe<null | ReturnType<Fn>> {
-    return this.isNothing() ? Maybe.of(null) : Maybe.of(fn(this.__value!))
+    return this.isNothing() ? Maybe.of(null) : Maybe.of(fn(this.value!))
+  }
+  public join(): Value {
+    return this.value
+  }
+  // monad 实现
+  public chain(fn: Fun) : ThisType<ReturnType<Fun>> {
+    return this.map(fn).join()
   }
 }
 

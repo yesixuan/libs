@@ -10,7 +10,13 @@ export class Left<Value = any> extends Container<Value> {
     return new Left(value)
   }
   // Left 会忽略 fn
-  map(_: Fun): Left {
+  map(_: Fun): ThisType<Value> {
+    return this
+  }
+  join() : ThisType<Value> {
+    return this
+  }
+  chain() : ThisType<Value> {
     return this
   }
 }
@@ -24,6 +30,12 @@ export class Right<Value = any> extends Container<Value> {
   }
   map<Fn extends  (...args: any) => any>(fn: Fn): Right<ReturnType<Fn>> {
     return Right.of(fn(this.__value))
+  }
+  join(): Value {
+    return this.value
+  }
+  chain(fn: Fun): ThisType<Fun> {
+    return this.map(fn).join()
   }
 }
 
