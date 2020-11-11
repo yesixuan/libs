@@ -29,12 +29,5 @@ export const compose: F.Compose = (...fns) =>
     ? fns[0]
     : fns.reduce((prev, curr) => (...args) => prev(curr(...args)))
 
-export const either = curry((leftFn, rightFn, functor) => {
-  switch(functor.constructor) {
-    case Left: return leftFn(functor.__value)
-    case Right: return rightFn(functor.__value)
-  }
-})
-
 
 
