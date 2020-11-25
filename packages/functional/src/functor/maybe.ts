@@ -1,5 +1,5 @@
 import { curry } from "../util"
-import { Fun } from '../type';
+import { Fun, IContainer } from '../type';
 
 export class Container<Value> {
   protected __value: Value
@@ -11,7 +11,7 @@ export class Container<Value> {
   }
 }
 
-export class Maybe<Value = any> extends Container<Value> {
+export class Maybe<Value = unknown> extends Container<Value> implements IContainer<Value> {
   constructor(value: Value) {
     super(value)
   }
@@ -31,6 +31,10 @@ export class Maybe<Value = any> extends Container<Value> {
   // monad 实现
   public chain(fn: Fun) : ThisType<ReturnType<Fun>> {
     return this.map(fn).join()
+  }
+  // ap 实现
+  public ap(functor: IContainer<unknown>): IContainer<unknown> {
+    return functor.map(this.value)
   }
 }
 

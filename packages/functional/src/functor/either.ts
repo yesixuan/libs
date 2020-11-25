@@ -1,8 +1,8 @@
 import { Container } from "./maybe"
-import { Fun } from "../type"
+import { Fun, IContainer } from "../type"
 import { curry } from "../util"
 
-export class Left<Value = any> extends Container<Value> {
+export class Left<Value = unknown> extends Container<Value> implements IContainer<Value> {
   constructor(value: Value) {
     super(value)
   }
@@ -10,7 +10,7 @@ export class Left<Value = any> extends Container<Value> {
     return new Left(value)
   }
   // Left 会忽略 fn
-  map(_: Fun): ThisType<Value> {
+  map(): Left<Value> {
     return this
   }
   join() : ThisType<Value> {
@@ -19,16 +19,20 @@ export class Left<Value = any> extends Container<Value> {
   chain() : ThisType<Value> {
     return this
   }
+  // ap 实现
+  public ap(functor: IContainer<unknown>): IContainer<unknown> {
+    return functor.map(this.value)
+  }
 }
 
-export class Right<Value = any> extends Container<Value> {
+export class Right<Value = unknown> extends Container<Value> implements IContainer<Value> {
   constructor(value: Value) {
     super(value)
   }
   static of<Value>(value: Value): Right<Value> {
     return new Right(value)
   }
-  map<Fn extends  (...args: any) => any>(fn: Fn): Right<ReturnType<Fn>> {
+  map<Fn extends  (...args: [unknown]) => any>(fn: Fn): Right<ReturnType<Fn>> {
     return Right.of(fn(this.__value))
   }
   join(): Value {
@@ -36,6 +40,10 @@ export class Right<Value = any> extends Container<Value> {
   }
   chain(fn: Fun): ThisType<Fun> {
     return this.map(fn).join()
+  }
+  // ap 实现
+  public ap(functor: IContainer<unknown>): IContainer<unknown> {
+    return functor.map(this.value)
   }
 }
 

@@ -1,8 +1,8 @@
-import { Fun } from "../type"
+import { Fun, IContainer } from "../type"
 import { compose } from "../util"
 
 // IO 函子实际上是将副作用包裹在一个函数中延迟执行，这样一来，它还是一个纯函数
-export class IO<Fn extends Fun> {
+export class IO<Fn extends Fun> implements IContainer<Fn> {
   private unsafePerformIO: Fn
   constructor(fn: Fn) {
     this.unsafePerformIO = fn
@@ -22,5 +22,9 @@ export class IO<Fn extends Fun> {
   }
   chain(fn: Fn): ThisType<Fn> {
     return this.map(fn).join()
+  }
+  // ap 实现
+  public ap(functor: IContainer<unknown>): IContainer<unknown> {
+    return functor.map(this.unsafePerformIO)
   }
 }
