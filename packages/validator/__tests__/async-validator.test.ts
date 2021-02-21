@@ -38,10 +38,10 @@ describe('异步校验器测试', () => {
   const { verifySingleAsync, verifyAsync, verifyAllAsync } = createValidator(ruleConfig)
   it('verifySingleAsync', async() => {
     // 没有必填的情况下，如果值为 null undefined 空字符，则不用校验其他规则，直接开绿灯 
-    let res = await verifySingleAsync('notRequired', '')
-    expect(res.valid).toEqual(true)
+    // let res = await verifySingleAsync('notRequired', '')
+    // expect(res.valid).toEqual(true)
     // 同步规则用异步校验器
-    res = await verifySingleAsync('name', 'a')
+    let res = await verifySingleAsync('name', 'a')
     expect(res.msg).toEqual('长度在 2 ~ 6 之间')
     // 异步校验 （reject）
     res = await verifySingleAsync('age', '18')

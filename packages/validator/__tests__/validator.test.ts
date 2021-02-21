@@ -7,9 +7,9 @@ describe('校验器测试', () => {
   //   age: '12'
   // }
   const ruleConfig = {
-    notRequired: [
-      { validator: 'min:2 max:6', msg: '长度在 2 ~ 6 之间' }
-    ],
+    // notRequired: [
+    //   { validator: 'min:2 max:6', msg: '长度在 2 ~ 6 之间' }
+    // ],
     name: [
       {
         validator: 'required',
@@ -34,7 +34,7 @@ describe('校验器测试', () => {
   const { verifySingle, verify, verifyAll } = createValidator(ruleConfig)
   it('verifySingle', () => {
     // 没有必填的情况下，如果值为 null undefined 空字符，则不用校验其他规则，直接开绿灯 
-    expect(verifySingle('notRequired', '').valid).toEqual(true)
+    // expect(verifySingle('notRequired', '').valid).toEqual(true)
     // 测试 必填项
     expect(verifySingle('name', '').msg).toEqual('必填')
     // 测试长度规则

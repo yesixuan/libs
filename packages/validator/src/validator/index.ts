@@ -3,9 +3,9 @@ import { getHandledRuleConfig, handleRequired, checkRules } from '../utils'
 
 const defaultRules = getDefaultRules()
 
-export type ValidatorFn  = (v: string) => boolean | Promise<boolean>
+export type ValidatorFn  = (v: string, target?: Target) => boolean | Promise<boolean>
 
-interface Target {
+export interface Target {
   [k: string]: Object
 }
 
@@ -51,36 +51,64 @@ interface Validator {
   verifySingleAsync: VerifySingleAsync
   verifyAsync: VerifyAsync
   verifyAllAsync: VerifyAllAsync
+  resetRes: () => void
+  changeRule: (rule: RuleConfig) => void
+  getResult: () => AllRes
 }
 
 /**
  * @public
  */
-export function createValidator(ruleConfig: RuleConfig) : Validator {
+export function createValidator(ruleConfig: RuleConfig, needRequired = false) : Validator {
   // 统一处理成函数的配置
-  const config: PureRuleConfig = getHandledRuleConfig(ruleConfig, defaultRules)
+  let config: PureRuleConfig = getHandledRuleConfig(ruleConfig, defaultRules)
 
-  const verifySingle = (key: string, val: any) :Res => {
-    if (handleRequired(val, ruleConfig[key])) { // 值为空，校验又没有必填字段
-      return {
-        name: key,
-        valid: true
+  // 全局维护一份整体的校验结果
+  let validRes: AllRes = Object.create(null)
+
+  // 重置校验结果为通过
+  const resetRes = () => {
+    validRes = Object.keys(ruleConfig).reduce((prev, curr) => {
+      prev[curr] = {
+        name: curr,
+        valid: true,
       }
-    }
-    return checkRules(key, val, config)
+      return prev
+    }, {})
   }
 
-  const verifySingleAsync = async (key: string, val: any): Promise<Res> => {
+  const getResult = () => ({...validRes})
+
+  // todo 规则改变时（传入新规则） 1. config 重新生成；2. 校验结果修改
+  const changeRule = (rule: RuleConfig) => {
+    ruleConfig = rule
+    config = getHandledRuleConfig(ruleConfig, defaultRules)
+  }
+
+  resetRes()
+
+  const verifySingle = (key: string, val: any, target?: Target) :Res => {
     let res = {
       name: key,
       valid: true
     }
-    if (handleRequired(val, ruleConfig[key])) { // 值为空，校验又没有必填字段
-      return res
+    if (needRequired && handleRequired(val, ruleConfig[key])) { // 值为空，校验又没有必填字段
+      return validRes[key] = res
+    }
+    return validRes[key] = checkRules(key, val, config, target)
+  }
+
+  const verifySingleAsync = async (key: string, val: any, target?: Target): Promise<Res> => {
+    let res = {
+      name: key,
+      valid: true
+    }
+    if (needRequired && handleRequired(val, ruleConfig[key])) { // 值为空，校验又没有必填字段
+      return validRes[key] = res
     }
     const resList = await Promise.all(config[key].map(
       ({ validator, msg }) => 
-        Promise.resolve(validator(val))
+        Promise.resolve(validator(val, target))
           .then(valid => ({ valid, msg: valid ? '' : msg, name: key }))
           .catch(_ => ({ valid: false, msg, name: key })
         )
@@ -88,21 +116,20 @@ export function createValidator(ruleConfig: RuleConfig) : Validator {
     )
     for (let i = 0; i < resList.length; i++) {
       if (!resList[i].valid) {
-        return resList[i]
+        return validRes[key] = resList[i]
       }
     }
-    return res
+    return validRes[key] = res
   }
 
-  const verify = (target: Target, order: string[] = []): Res => {
-    if (!order.length) {
-      order = Object.keys(ruleConfig)
-    }
+  const verify = (target: Target, order: string[] = Object.keys(ruleConfig)): Res => {
+    // 校验结果置为通过
+    resetRes()
     for (let i = 0; i < order.length; i++) {
       const key = order[i]
-      // if (!target[key]) continue
       const res = verifySingle(key, target[key])
-      if (!res.valid) return res
+      if (!res.valid) 
+        return validRes[key] = res
     }
     return {
       name: '',
@@ -111,14 +138,14 @@ export function createValidator(ruleConfig: RuleConfig) : Validator {
     }
   }
 
-  const verifyAsync = async(target: Target, order: string[] = []): Promise<Res> => {
-    if (!order.length) {
-      order = Object.keys(ruleConfig)
-    }
+  const verifyAsync = async(target: Target, order: string[] = Object.keys(ruleConfig)): Promise<Res> => {
+    // 校验结果置为通过
+    resetRes()
     for (let i = 0; i < order.length; i++) {
       const key = order[i]
       const res = await verifySingleAsync(key, target[key])
-      if (!res.valid) return res
+      if (!res.valid) 
+        return validRes[key] = res
     }
     return {
       name: '',
@@ -127,28 +154,26 @@ export function createValidator(ruleConfig: RuleConfig) : Validator {
     }
   }
 
-  const verifyAll = (target: Target, order: string[] = []): AllRes => {
+  const verifyAll = (target: Target, order: string[] = Object.keys(ruleConfig)): AllRes => {
+    // 校验结果置为通过
+    resetRes()
     const res = Object.create(null)
-    if (!order.length) {
-      order = Object.keys(ruleConfig)
-    }
     for (let i = 0; i < order.length; i++) {
       const key = order[i]
       res[key] = verifySingle(key, target[key])
     }
-    return res
+    return validRes = res
   }
 
-  const verifyAllAsync = async(target: Target, order: string[] = []): Promise<AllRes> => {
+  const verifyAllAsync = async(target: Target, order: string[] = Object.keys(ruleConfig)): Promise<AllRes> => {
+    // 校验结果置为通过
+    resetRes()
     const res = Object.create(null)
-    if (!order.length) {
-      order = Object.keys(ruleConfig)
-    }
     for (let i = 0; i < order.length; i++) {
       const key = order[i]
       res[key] = await verifySingleAsync(key, target[key])
     }
-    return res
+    return validRes = res
   }
 
   return {
@@ -161,6 +186,9 @@ export function createValidator(ruleConfig: RuleConfig) : Validator {
     // 与上面一一对应，增加支持异步
     verifySingleAsync,
     verifyAsync,
-    verifyAllAsync
+    verifyAllAsync,
+    resetRes,
+    changeRule,
+    getResult,
   }
 }

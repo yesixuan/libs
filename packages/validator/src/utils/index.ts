@@ -1,4 +1,4 @@
-import { ValidatorFn, RuleConfig, PureRuleConfig, Rule, Res } from '../validator'
+import { ValidatorFn, RuleConfig, PureRuleConfig, Rule, Res, Target } from '../validator'
 import { RuleMap } from '../rule'
 
 export function createValidatorFn(validator: string | RegExp | ValidatorFn, defaultRules: RuleMap): ValidatorFn {
@@ -32,7 +32,7 @@ function createLengthValidate (rule: string): ValidatorFn {
     p5 === 'ax' ? max = p6 : min = p6
   }
   if ((min && max) && (~~min > ~~max)) throw new Error('最小长度不能大于最大长度')
-  return ({length}: string) => !((min && ~~min > length) || (max && ~~max < length))
+  return ({length}: string = '') => !((min && ~~min > length) || (max && ~~max < length))
 }
 
 // 将原始的配置转换成规整的校验（所有 validator 转为函数）
@@ -56,11 +56,11 @@ export function handleRequired(v = '', rules: Rule[]): boolean {
   return (v === null || v === undefined || v === '') && rules.every(({validator}) => validator !== 'required')
 }
 
-export function checkRules(key: string, val: string, ruleConfig: PureRuleConfig): Res {
+export function checkRules(key: string, val: string, ruleConfig: PureRuleConfig, target?: Target): Res {
   const rules = ruleConfig[key]
   for (let i = 0; i < rules.length; i++) {
     const { validator, msg } = rules[i]
-    if (!validator(val)) {
+    if (!validator(val, target)) {
       return {
         name: key,
         valid: false,
