@@ -1,5 +1,6 @@
+import { checkRules, getHandledRuleConfig, handleRequired } from '../utils'
+
 import { getDefaultRules } from '../rule'
-import { getHandledRuleConfig, handleRequired, checkRules } from '../utils'
 
 const defaultRules = getDefaultRules()
 
@@ -37,8 +38,8 @@ interface AllRes {
   [k: string]: Res
 }
 
-type VerifySingle = (key: string, val: string) => Res
-type VerifySingleAsync = (key: string, val: string) => Promise<Res>
+type VerifySingle = (key: string, val: string,target?: Target) => Res
+type VerifySingleAsync = (key: string, val: string,target?: Target) => Promise<Res>
 type Verify = (target: Target, order?: string[]) => Res
 type VerifyAsync = (target: Target, order?: string[]) => Promise<Res>
 type VerifyAll = (target: Target) => { [k: string]: Res }
