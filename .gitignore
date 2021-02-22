@@ -4,3 +4,5 @@ temp
 */**/lib
 coverage
 yarn-error.log
+.history
+
