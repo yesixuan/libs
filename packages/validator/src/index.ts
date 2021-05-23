@@ -1,2 +1,2 @@
-export { extendRegexpRule, extendValidator } from './rule'
-export { createValidator } from './validator'
+export * from './rule'
+export * from './validator'

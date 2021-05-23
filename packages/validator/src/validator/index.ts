@@ -34,7 +34,7 @@ export interface Res {
   msg?: string
 }
 
-interface AllRes {
+export interface AllRes {
   [k: string]: Res
 }
 
@@ -45,7 +45,7 @@ type VerifyAsync = (target: Target, order?: string[]) => Promise<Res>
 type VerifyAll = (target: Target) => { [k: string]: Res }
 type VerifyAllAsync = (target: Target) => Promise<{ [k: string]: Res }>
 
-interface Validator {
+export interface Validator {
   verifySingle: VerifySingle
   verify: Verify
   verifyAll: VerifyAll
@@ -75,7 +75,7 @@ export function createValidator(ruleConfig: RuleConfig, needRequired = false) : 
         valid: true,
       }
       return prev
-    }, {})
+    }, (Object.create(null) as AllRes))
   }
 
   const getResult = () => ({...validRes})

@@ -15,7 +15,10 @@ export function createValidatorFn(validator: string | RegExp | ValidatorFn, defa
     throw new Error(`您还未定义 ${validator} 这条规则`)
   }
   if (validator instanceof RegExp) {
-    return (val: string) => validator.test(val)
+    return (val: string) => {
+      if (val == null) return false
+      return val.search(validator) !== -1
+    }
   }
   if (typeof validator === 'function') {
     return validator
@@ -57,7 +60,7 @@ export function handleRequired(v = '', rules: Rule[]): boolean {
 }
 
 export function checkRules(key: string, val: string, ruleConfig: PureRuleConfig, target?: Target): Res {
-  const rules = ruleConfig[key]
+  const rules = ruleConfig[key] ?? []
   for (let i = 0; i < rules.length; i++) {
     const { validator, msg } = rules[i]
     if (!validator(val, target)) {
