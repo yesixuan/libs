@@ -5,4 +5,6 @@ temp
 coverage
 yarn-error.log
 .history
+lang
+i18n.config.js
 

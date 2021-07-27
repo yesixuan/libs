@@ -74,18 +74,21 @@ async function build(target) {
       file: `${getPkgPath(target)}/lib/index.js`,
       format: 'cjs',
       name: target,
+      extend: true,
       sourcemap: true
     },
     {
       file: `${getPkgPath(target)}/lib/index.esm.js`,
       format: 'esm',
       name: target,
+      extend: true,
       sourcemap: true
     },
     {
       file: `${getPkgPath(target)}/lib/index.iife.js`,
       format: 'iife',
       name: target,
+      extend: true,
       sourcemap: true
     }
   ]

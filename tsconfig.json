@@ -15,6 +15,7 @@
     "strictNullChecks": true,
     "resolveJsonModule": true,
     "sourceMap": true,
+    "downlevelIteration": true,
     "baseUrl": ".",
     "rootDir": "."
   },

@@ -4,7 +4,13 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "build": "node scripts/build.js",
+    "hehe": "yarn build i18n-util",
+    "haha": "node packages/i18n-util/bin/genExcel.js",
     "test": "jest"
+  },
+  "dependencies": {
+    "node-xlsx": "^0.17.1",
+    "shortid": "^2.2.16"
   },
   "peerDependencies": {
     "rxjs": ">=6.0.0-beta.0 <7",
