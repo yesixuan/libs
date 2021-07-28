@@ -1,6 +1,6 @@
 {
   "name": "@ignorance/i18n-util",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "i18n-util",
   "keywords": [
     "i18n util"
@@ -11,9 +11,9 @@
   "main": "src/index.js",
   "types": "lib/index.d.ts",
   "bin": {
-    "resetZh": "bin/resetZh",
-    "genExcel": "bin/genExcel",
-    "genLangs": "bin/genLangs"
+    "resetZh": "bin/resetZh.js",
+    "genExcel": "bin/genExcel.js",
+    "genLangs": "bin/genLangs.js"
   },
   "directories": {
     "lib": "lib",
