@@ -78,7 +78,7 @@ function mapDir(dir = rootPath, callback = noop, finish = noop) {
 }
 
 // 将原项目中的 abc.def 还原成 中文
-function toZH(match, $2) {
+function toZH(match) {
 	if (!key2value) {
     try {
       zhLangObj = require(path.resolve(rootPath, config.zhLangPath))
@@ -89,8 +89,9 @@ function toZH(match, $2) {
 		value2key = map.value2key
 		key2value = map.key2value
 	}
-  if (key2value.has($2)) {
-    return match.replace($2, key2value.get($2))
+  if (key2value.has(match)) {
+    // return match.replace($2, key2value.get($2))
+    return key2value.get(match)
   }
   return match
 }
@@ -111,7 +112,7 @@ function toZH(match, $2) {
 // )
 
 // 将项目中的 中文 转换成 key 的方式
-function handleMatch(match, $2) {
+function handleMatch(match) {
   try {
     zhLangObj = require(path.resolve(rootPath, config.zhLangPath))
   } catch(err) {
@@ -122,8 +123,9 @@ function handleMatch(match, $2) {
 		value2key = map.value2key
 		key2value = map.key2value
 	}
-  if (value2key.has($2)) {
-    return match.replace($2, value2key.get($2))
+  if (value2key.has(match)) {
+    // return match.replace($2, value2key.get($2))
+    return value2key.get(match)
   }
   return match
 }
@@ -143,6 +145,8 @@ class Replace$t {
       key2value = map.key2value
     }
     this.options = options
+    const zhStr = Array.from(value2key.keys())
+    this.reg = new RegExp(`(${zhStr.join('|')})`, 'g')
   }
   apply(compiler) {
     compiler.hooks.emit.tap('Replace$t', (compilation) => {
@@ -151,13 +155,17 @@ class Replace$t {
         // .source()是获取构建产物的文本
         let content = compilation.assets[item].source()
         if (typeof content !== 'string') return
-        content = content.replace(/\$t\((['|"])([\u4e00-\u9fa5].*?)\1\)/g, (match, _$1, $2) => {
+        // content = content.replace(/\$t\((['|"])([\u4e00-\u9fa5].*?)\1\)/g, (match, _$1, $2) => {
+        //   // 处理字符串
+        //   return handleMatch(match, $2)
+        // })
+        // content = content.replace(/\$t\(\\(['|"])([\u4e00-\u9fa5].*?)\\\1\)/g, (match, _$1, $2) => {
+        //   // 处理字符串
+        //   return handleMatch(match, $2)
+        // })
+        content = content.replace(this.reg, (match) => {
           // 处理字符串
-          return handleMatch(match, $2)
-        })
-        content = content.replace(/\$t\(\\(['|"])([\u4e00-\u9fa5].*?)\\\1\)/g, (match, _$1, $2) => {
-          // 处理字符串
-          return handleMatch(match, $2)
+          return handleMatch(match)
         })
         // 更新构建产物对象
         compilation.assets[item] = {
@@ -242,7 +250,6 @@ function getTransformedWords() {
       // fs.writeFile(langPathes[i], JSON.stringify(obj, null, '\t'), err => {
       //   err && console.log('写入语言文件出错', err)
       // })
-      console.log('heheheh', typeof obj, JSON.stringify(obj, null, '\t'), langPathes[i], sheets)
       await writeFile(langPathes[i], JSON.stringify(obj, null, '\t'))
         .then(msg => console.log('写入成功', msg))
         .catch(err => {
