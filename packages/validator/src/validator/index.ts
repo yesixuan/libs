@@ -80,6 +80,7 @@ export function createValidator(
   // 重置校验结果为通过
   const resetRes = (keys: string[] | string = Object.keys(ruleConfig)) => {
     if (typeof keys === 'string') keys = [keys]
+    if (!Array.isArray(keys)) keys = Object.keys(ruleConfig)
     validRes = keys.reduce((prev, curr) => {
       prev[curr] = {
         name: curr,
