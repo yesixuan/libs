@@ -1,4 +1,9 @@
-import { checkRules, getHandledRuleConfig, handleRequired } from '../utils'
+import {
+  checkRules,
+  deepClone,
+  getHandledRuleConfig,
+  handleRequired,
+} from '../utils'
 
 import { getDefaultRules } from '../rule'
 
@@ -35,6 +40,7 @@ export interface Res {
   name: string // 字段名
   valid: boolean
   msg?: string
+  dirty?: boolean
 }
 
 export interface AllRes {
@@ -85,12 +91,13 @@ export function createValidator(
       prev[curr] = {
         name: curr,
         valid: true,
+        dirty: false,
       }
       return prev
     }, getResult())
   }
 
-  const getResult = () => ({ ...validRes })
+  const getResult = () => deepClone(validRes)
 
   // todo 规则改变时（传入新规则） 1. config 重新生成；2. 校验结果修改
   const changeRule = (rule: RuleConfig) => {
@@ -104,6 +111,7 @@ export function createValidator(
     const res = {
       name: key,
       valid: true,
+      dirty: true,
     }
     if (needRequired && handleRequired(val, ruleConfig[key])) {
       // 值为空，校验又没有必填字段
@@ -120,6 +128,7 @@ export function createValidator(
     const res = {
       name: key,
       valid: true,
+      dirty: true,
     }
     if (needRequired && handleRequired(val, ruleConfig[key])) {
       // 值为空，校验又没有必填字段
@@ -146,16 +155,21 @@ export function createValidator(
   ): Res => {
     // 校验结果置为通过
     resetRes()
-    for (let i = 0; i < order.length; i++) {
-      const key = order[i]
-      const res = verifySingle(key, target[key])
-      if (!res.valid) return (validRes[key] = res)
-    }
-    return {
+    let result: Res = {
       name: '',
       valid: true,
       msg: '',
+      dirty: true,
     }
+    for (let i = 0; i < order.length; i++) {
+      const key = order[i]
+      const res = verifySingle(key, target[key])
+      validRes[key] = res
+      if (!res.valid && !result.valid) {
+        result = res
+      }
+    }
+    return result
   }
 
   const verifyAsync = async (
@@ -164,16 +178,21 @@ export function createValidator(
   ): Promise<Res> => {
     // 校验结果置为通过
     resetRes()
-    for (let i = 0; i < order.length; i++) {
-      const key = order[i]
-      const res = await verifySingleAsync(key, target[key])
-      if (!res.valid) return (validRes[key] = res)
-    }
-    return {
+    let result: Res = {
       name: '',
       valid: true,
       msg: '',
+      dirty: true,
     }
+    for (let i = 0; i < order.length; i++) {
+      const key = order[i]
+      const res = await verifySingleAsync(key, target[key])
+      validRes[key] = res
+      if (!res.valid && !result.valid) {
+        result = res
+      }
+    }
+    return result
   }
 
   const verifyAll = (
