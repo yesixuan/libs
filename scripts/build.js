@@ -10,10 +10,10 @@ const { DEFAULT_EXTENSIONS } = require('@babel/core')
 const { terser } = require('rollup-plugin-terser')
 const { targets: getTargets } = require('./util')
 
-const [ , , ...targets ] = process.argv
+const [, , ...targets] = process.argv
 const targetPackages = targets.length ? targets : getTargets
 
-const getPkgPath = target => path.join(__dirname, `../packages/${target}`)
+const getPkgPath = (target) => path.join(__dirname, `../packages/${target}`)
 
 buildAll(targetPackages)
 
@@ -21,7 +21,7 @@ async function buildAll(targets) {
   for (const target of targets) {
     try {
       await build(target)
-    } catch(e) {
+    } catch (e) {
       console.log('eeeeeeeee', e)
     }
   }
@@ -39,7 +39,7 @@ async function build(target) {
         include: ['src/**/*.ts'],
         exclude: ['node_modules/**', 'lib/**', '*.js'],
       }),
-  
+
       // 配合 commnjs 解析第三方模块
       resolve({
         // 将自定义选项传递给解析插件
@@ -47,7 +47,7 @@ async function build(target) {
           moduleDirectory: 'node_modules',
         },
       }),
-  
+
       // 使得 rollup 支持 commonjs 规范，识别 commonjs 规范的依赖
       commonjs(),
       rollupTypescript({
@@ -60,14 +60,11 @@ async function build(target) {
         // 只转换源代码，不运行外部依赖
         exclude: 'node_modules/**',
         // babel 默认不支持 ts 需要手动添加
-        extensions: [
-          ...DEFAULT_EXTENSIONS,
-          '.ts',
-        ],
+        extensions: [...DEFAULT_EXTENSIONS, '.ts'],
       }),
-      terser()
+      terser(),
     ],
-    external: ['rxjs', 'vuex', 'vue'],
+    external: ['rxjs', 'vuex', 'vue', '@ignorance/validator'],
   }
   const outputOptions = [
     {
@@ -75,22 +72,22 @@ async function build(target) {
       format: 'cjs',
       name: target,
       extend: true,
-      sourcemap: true
+      sourcemap: true,
     },
     {
       file: `${getPkgPath(target)}/lib/index.esm.js`,
       format: 'esm',
       name: target,
       extend: true,
-      sourcemap: true
+      sourcemap: true,
     },
     {
       file: `${getPkgPath(target)}/lib/index.iife.js`,
       format: 'iife',
       name: target,
       extend: true,
-      sourcemap: true
-    }
+      sourcemap: true,
+    },
   ]
   const bundle = await rollup.rollup(inputOptions)
   for (const output of outputOptions) {
@@ -101,12 +98,11 @@ async function build(target) {
   const { Extractor, ExtractorConfig } = require('@microsoft/api-extractor')
   const pkgDir = getPkgPath(target)
   const extractorConfigPath = path.resolve(pkgDir, `api-extractor.json`)
-  const extractorConfig = ExtractorConfig.loadFileAndPrepare(
-    extractorConfigPath
-  )
+  const extractorConfig =
+    ExtractorConfig.loadFileAndPrepare(extractorConfigPath)
   const extractorResult = Extractor.invoke(extractorConfig, {
     localBuild: true,
-    showVerboseMessages: true
+    showVerboseMessages: true,
   })
 
   if (extractorResult.succeeded) {
@@ -117,15 +113,13 @@ async function build(target) {
       const existing = await fs.readFile(dtsPath, 'utf-8')
       const typeFiles = await fs.readdir(typesDir)
       const toAdd = await Promise.all(
-        typeFiles.map(file => {
+        typeFiles.map((file) => {
           return fs.readFile(path.resolve(typesDir, file), 'utf-8')
         })
       )
       await fs.writeFile(dtsPath, existing + '\n' + toAdd.join('\n'))
     }
-    console.log(
-      `API Extractor completed successfully.`
-    )
+    console.log(`API Extractor completed successfully.`)
   } else {
     console.error(
       `API Extractor completed with ${extractorResult.errorCount} errors` +

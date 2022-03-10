@@ -1,11 +1,14 @@
 {
-  "name": "@ignorance/rx-composition",
+  "name": "@ignorance/vue-hooks",
   "version": "0.0.1",
-  "description": "rx composition API for vue3",
+  "description": "vue-hooks for vue3",
   "keywords": [
     "vue3",
-    "rxjs"
+    "hooks"
   ],
+  "dependencies": {
+    "@ignorance/validator": "^1.1.2"
+  },
   "author": "yesixuan <18373209286@163.com>",
   "homepage": "https://github.com/yesixuan/libs",
   "license": "ISC",
@@ -31,7 +34,7 @@
   },
   "peerDependencies": {
     "vue": ">=3.0.0",
-    "rxjs": ">=6.0.0-beta.0 <7"
+    "@ignorance/validator": "^1.1.2"
   },
   "bugs": {
     "url": "https://github.com/yesixuan/libs/issues"
