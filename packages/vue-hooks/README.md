@@ -14,7 +14,7 @@ yarn add @ignorance/vue-hooks
 
 ```vue
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { useValidator } from '@ignorance/vue-hooks'
 
 defineProps<{ msg: string }>()
@@ -23,14 +23,32 @@ const data = reactive({
   name: '',
   pwd: '',
 })
-const { result, validate, verify, verifyAll, resetRes } = useValidator(
-  {
-    name: [
-      {
-        validator: 'required',
-        msg: '必填',
-      },
-    ],
+const { result, validate, verify, verifyAll, resetRes, changeRules } =
+  useValidator(
+    {
+      name: [
+        {
+          validator: 'required',
+          msg: '必填',
+        },
+      ],
+      pwd: [
+        {
+          validator: 'required',
+          msg: '必填',
+        },
+        {
+          validator: 'min:3 max:6',
+          msg: '长度在 2 ~ 6 之间',
+        },
+      ],
+    },
+    data
+  )
+
+const handleChangeRule = () => {
+  // 删除 name 规则
+  changeRules({
     pwd: [
       {
         validator: 'required',
@@ -41,9 +59,8 @@ const { result, validate, verify, verifyAll, resetRes } = useValidator(
         msg: '长度在 2 ~ 6 之间',
       },
     ],
-  },
-  data
-)
+  })
+}
 </script>
 
 <template>
@@ -67,6 +84,9 @@ const { result, validate, verify, verifyAll, resetRes } = useValidator(
   </div>
   <div>
     <button @click="resetRes">重置所有校验</button>
+  </div>
+  <div>
+    <button @click="handleChangeRule">修改规则</button>
   </div>
 </template>
 ```
