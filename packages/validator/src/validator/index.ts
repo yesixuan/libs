@@ -12,7 +12,10 @@ const defaultRules = getDefaultRules()
 export type ValidatorFn = (
   v: string,
   target?: Target
-) => boolean | Promise<boolean>
+) =>
+  | boolean
+  | { valid: boolean; msg: string }
+  | Promise<boolean | { valid: boolean; msg: string }>
 
 export interface Target {
   [k: string]: unknown
@@ -137,13 +140,29 @@ export function createValidator(
     const resList = await Promise.all(
       config[key].map(({ validator, msg }) =>
         Promise.resolve(validator(val, target))
-          .then((valid) => ({ valid, msg: valid ? '' : msg, name: key }))
-          .catch((_) => ({ valid: false, msg, name: key }))
+          // 第一层处理返回结果中已经带了校验信息
+          .then((res) => {
+            if (
+              typeof res === 'object' &&
+              'valid' in res &&
+              'msg' in res &&
+              !res.valid
+            ) {
+              return {
+                name: key,
+                dirty: true,
+                ...res,
+              }
+            }
+            return { valid: res, msg: res ? '' : msg, name: key, dirty: true }
+          })
+          // .then((valid) => ({ valid, msg: valid ? '' : msg, name: key }))
+          .catch((_) => ({ valid: false, msg, name: key, dirty: true }))
       )
     )
     for (let i = 0; i < resList.length; i++) {
       if (!resList[i].valid) {
-        return (validRes[key] = resList[i])
+        return (validRes[key] = resList[i] as Res)
       }
     }
     return (validRes[key] = res)
@@ -163,7 +182,7 @@ export function createValidator(
     }
     for (let i = 0; i < order.length; i++) {
       const key = order[i]
-      const res = verifySingle(key, target[key])
+      const res = verifySingle(key, target[key], target)
       validRes[key] = res
       if (!res.valid && !result.valid) {
         result = res
@@ -186,10 +205,11 @@ export function createValidator(
     }
     for (let i = 0; i < order.length; i++) {
       const key = order[i]
-      const res = await verifySingleAsync(key, target[key])
+      const res = await verifySingleAsync(key, target[key], target)
       validRes[key] = res
-      if (!res.valid && !result.valid) {
+      if (!res.valid && result.valid) {
         result = res
+        return result
       }
     }
     return result
@@ -204,7 +224,7 @@ export function createValidator(
     const res = Object.create(null)
     for (let i = 0; i < order.length; i++) {
       const key = order[i]
-      res[key] = verifySingle(key, target[key])
+      res[key] = verifySingle(key, target[key], target)
     }
     return (validRes = res)
   }
@@ -218,7 +238,7 @@ export function createValidator(
     const res = Object.create(null)
     for (let i = 0; i < order.length; i++) {
       const key = order[i]
-      res[key] = await verifySingleAsync(key, target[key])
+      res[key] = await verifySingleAsync(key, target[key], target)
     }
     return (validRes = res)
   }

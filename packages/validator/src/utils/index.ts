@@ -39,14 +39,14 @@ export function createValidatorFn(
 function createLengthValidate(rule: string): ValidatorFn {
   const reg = /^(m(ax|in):(\d+))(\sm(ax|in):(\d+)){0,1}$/
   const [, , p2, p3, p4, p5, p6] = rule.match(reg) as string[]
-  let min: string = '',
-    max: string = ''
+  let min = '',
+    max = ''
   p2 === 'in' ? (min = p3) : (max = p3)
   if (p4 && p2 !== p5) {
     p5 === 'ax' ? (max = p6) : (min = p6)
   }
   if (min && max && ~~min > ~~max) throw new Error('最小长度不能大于最大长度')
-  return ({ length }: string = '') =>
+  return ({ length } = '') =>
     !((min && ~~min > length) || (max && ~~max < length))
 }
 
@@ -81,6 +81,17 @@ export function checkRules(
   const rules = ruleConfig[key] ?? []
   for (let i = 0; i < rules.length; i++) {
     const { validator, msg } = rules[i]
+    // 支持返回 { valid: false, msg: 'xxx' } 这样的结果，如果是，优先使用返回的结果
+    const res = validator(val, target)
+    if (typeof res === 'object' && 'valid' in res && 'msg' in res) {
+      if (res.valid === false) {
+        return {
+          name: key,
+          dirty: true,
+          ...res,
+        }
+      }
+    }
     if (!validator(val, target)) {
       return {
         name: key,
