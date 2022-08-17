@@ -1,6 +1,6 @@
 {
   "name": "@ignorance/validator",
-  "version": "1.1.9",
+  "version": "1.1.91",
   "description": "common JS validator",
   "keywords": [
     "validator"

@@ -27,7 +27,10 @@ export function createValidatorFn(
   if (validator instanceof RegExp) {
     return (val: string) => {
       if (val == null) return false
-      return val.search(validator) !== -1
+      if (typeof val !== 'string') {
+        throw `正则只能校验字符串类型，${val} 的类型必须为 String`
+      }
+      return val?.search(validator) !== -1
     }
   }
   if (typeof validator === 'function') {
